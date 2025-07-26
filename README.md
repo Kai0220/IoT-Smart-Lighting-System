@@ -6,11 +6,6 @@
 
 ---
 
-## 📺 Project Demo
-
-🎥 [Watch the video presentation on YouTube](https://youtu.be/IOx4orvSFwM)
-
----
 
 ## 📘 Overview
 
