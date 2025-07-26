@@ -1,89 +1,111 @@
-A project submitted for SWE30011 IoT Programming — Semester 1, 2024
-Developed by Jesse Ting Wen Kai | Student ID: 102769808
+# 💡 Smart Lighting and Monitoring System
 
-📘 Overview
-This IoT-based Smart Lighting and Monitoring System is designed to automate lighting based on environmental inputs and user interaction. It combines hardware sensors, actuators, and a web dashboard to enable both manual and automated lighting control, along with real-time monitoring and statistics.
+> **Course**: SWE30011 - IoT Programming (Semester 1, 2024)  
+> **Author**: Jesse Ting Wen Kai  
+> **Student ID**: 102769808
 
-⚙️ Features
-Four-level brightness control: 0 (OFF) to 3 (Maximum Brightness)
+---
 
-Multiple control interfaces:
+## 📺 Project Demo
 
-Physical Button
+🎥 [Watch the video presentation on YouTube](https://youtu.be/IOx4orvSFwM)
 
-Infrared Remote
+---
 
-Web Dashboard (Flask-based)
+## 📘 Overview
 
-Sensors:
+This IoT project demonstrates a **Smart Lighting and Monitoring System** that integrates Arduino and Raspberry Pi to control lighting levels based on sensor inputs and user interactions.
 
-IR Sensor
+It features real-time control, sensor-based automation, and energy tracking — all accessible through a Flask-powered web dashboard.
 
-Button
+---
 
-Light Dependent Resistor (LDR)
+## ⚙️ Features
 
-Ultrasonic Sensor
+- 🔘 **Manual Controls**:
+  - Button (digital)
+  - IR remote (analog)
+  - Web dashboard
 
-Automation Rules:
+- 📡 **Sensor Automation**:
+  - **LDR sensor**: adjusts brightness based on light intensity
+  - **Ultrasonic sensor**: detects presence to turn light on/off
+  - **Advanced automation**: uses average historical brightness data
 
-LDR auto-adjusts brightness based on ambient light
+- 📊 **Monitoring Dashboard**:
+  - Toggle sensor states
+  - Modify detection thresholds
+  - View energy usage and light condition graphs
 
-Ultrasonic sensor detects presence to turn lights on/off
+---
 
-Advanced automation adjusts initial brightness based on historical averages
+## 🧠 System Architecture
 
-Real-time Dashboard:
+- **Microcontroller**: Arduino Uno
+- **Edge Device**: Raspberry Pi
+- **Communication**: Serial (USB)
+- **Web Server**: Flask
+- **Database**: MariaDB
+- **Frontend**: HTML, CSS, JavaScript (Chart.js)
 
-Control sensors and lighting remotely
 
-Set sensor intervals and thresholds
+---
 
-View light condition trends and energy consumption stats
+## 🗺️ System Flow
 
-Data Analytics:
+```
+User Input / Sensor Trigger
+        ↓
+    Arduino Logic
+        ↓
+  Serial Communication
+        ↓
+ Raspberry Pi (Flask + DB)
+        ↓
+ Web Dashboard (Live Sync)
+```
 
-MariaDB stores real-time sensor and actuator data
+---
 
-Chart.js used for graphing energy and brightness over time
 
-🖥️ System Architecture
-The system architecture is based on a Microcontroller (Arduino Uno) and an Edge Device (Raspberry Pi):
 
-Arduino handles sensor input, relay switching, and LED control.
+---
 
-Raspberry Pi hosts the dashboard (Flask server), manages database (MariaDB), and handles bi-directional serial communication.
+## 📦 Technologies Used
 
-🧪 Technologies Used
-Backend
-Python 3
+### ➤ Arduino
+- `IRremote.h`
+- Digital and analog I/O
+- Relay control
 
-Flask
+### ➤ Raspberry Pi (Python)
+- Flask
+- `serial`
+- `mysql.connector`
+- `threading`
+- `socket.io`
+- Chart.js for graphs
 
-MariaDB
+### ➤ Web
+- HTML/CSS/JS
+- Flask templates
+- Live sensor/LED status updates via WebSocket
 
-Serial Communication
+---
 
-Socket.IO (Real-time sync)
+## 🧪 Sensors & Actuators
 
-Multithreading
+| Type         | Component         | Functionality                                  |
+|--------------|-------------------|-----------------------------------------------|
+| Input        | IR Receiver       | Remote control for toggle/brightness          |
+| Input        | Button            | Physical toggle with cyclic brightness levels |
+| Input        | LDR               | Auto-adjust brightness based on light         |
+| Input        | Ultrasonic        | Detects presence and toggles lights           |
+| Output       | Relay             | Controls 12V LED light bulb                   |
+| Output       | Red/Blue LEDs     | Simulate brightness levels (Level 2, 3)       |
 
-Frontend
-HTML, CSS, JavaScript
+---
 
-Chart.js (Graph rendering)
 
-Hardware
-Arduino Uno
 
-Raspberry Pi
 
-LDR Sensor
-
-IR Receiver
-
-Ultrasonic Sensor
-
-12V Relay Module
-
-LEDs & Light Bulb
