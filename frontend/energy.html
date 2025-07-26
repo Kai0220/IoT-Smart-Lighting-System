@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="author" content="Jesse Ting Wen Kai"/>
+    <meta name="description" content="iot"/>
+    <meta name="keywords" content="iot"/>
+    <title>Energy Consumption Statistics</title>
+   
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+</head>
+
+
+<script>
+    var energyChartInstance = null;
+    function renderBarChart(timestamps, energyConsumption) {
+    if (energyChartInstance) {
+        energyChartInstance.destroy(); // Destroy the existing chart instance
+    }
+
+    var ctx = document.getElementById("energy_chart").getContext("2d");
+    energyChartInstance = new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: timestamps,
+            datasets: [{
+                label: "Energy Consumption (kWh)",
+                data: energyConsumption,
+                backgroundColor: "rgba(54, 162, 235, 0.2)",
+                borderColor: "rgba(54, 162, 235, 1)",
+                borderWidth: 1
+            }]
+        },
+        options: {
+            plugins: {
+                datalabels: {
+                    formatter: function(value, context) {
+                        return value.toFixed(2); // Format the label to two decimal places
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: "Energy Consumption (kWh)"
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: "Date"
+                    }
+                }
+            }
+        }
+    });
+} 
+function fetchEnergyData(selectedMonth) {
+    // Make an AJAX request to fetch data for the selected month
+    fetch("/fetch_energy_data", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ selected_month: selectedMonth }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Check if data is valid and contains required properties
+        if (data && Array.isArray(data.energy_consumption) && Array.isArray(data.timestamps)) {
+            // Update total energy consumption and estimated price
+            document.getElementById("total_value").textContent = data.energy_consumption.reduce((acc, val) => acc + val, 0).toFixed(2);
+            document.getElementById("price_value").textContent = (data.energy_consumption.reduce((acc, val) => acc + val, 0) * 21.8 / 100).toFixed(2);
+
+            // Format timestamps to show only date
+            const formattedTimestamps = data.timestamps.map(timestamp => {
+                const date = new Date(timestamp);
+                return date.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
+            });
+
+            // Render the bar chart
+            renderBarChart(formattedTimestamps, data.energy_consumption);
+        } else {
+            // Update total energy consumption and estimated price to 0
+            document.getElementById("total_value").textContent = "0.00";
+            document.getElementById("price_value").textContent = "0.00";
+
+            // Render the bar chart with empty data arrays
+            renderBarChart([], []);
+        }
+    })
+    .catch(error => console.error("Error fetching data:", error));
+}
+</script>
+
+
+<body>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="light">Light Condition Statistics</a></li>
+            <li><a href="energy">Energy Comsumption Statistics</a></li>
+        </ul>
+    </nav>
+    <h1>Energy Comsumption Statistics</h1>
+
+    <div class="select-container">
+        <label for="month_select" class="select-label">Select Month:</label>
+        <select id="month_select" onchange="fetchEnergyData(this.value)" class="select-input">
+            <option value="">Please select a month</option>
+            <option value="1">January</option>
+            <option value="2">February</option>
+            <option value="3">March</option>
+            <option value="4">April</option>
+            <option value="5">May</option>
+            <option value="6">June</option>
+            <option value="7">July</option>
+            <option value="8">August</option>
+            <option value="9">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+        </select>
+    </div>
+    
+    <div class="info-container">
+        <p>Total Energy Consumption: <span id="total_value" class="energy-value"></span> kWh</p>
+        <p>Estimated Price: RM<span id="price_value" class="price-value"></span></p>
+    </div>
+    
+    <div style="width: 80%;" class="graph">
+        <canvas id="energy_chart"></canvas>
+      </div>
+      
+</body>
+</html>

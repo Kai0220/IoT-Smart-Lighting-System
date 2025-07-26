@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+
+<!DOCTYPE html>
+<html>
+
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="author" content="Jesse Ting Wen Kai"/>
+    <meta name="description" content="iot"/>
+    <meta name="keywords" content="iot"/>
+    <title>Home Page</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="light">Light Condition Statistics</a></li>
+            <li><a href="energy">Energy Comsumption Statistics</a></li>
+        </ul>
+    </nav>
+
+    <script>
+        // Connect to the WebSocket server
+        var socket = io();
+
+        // Listen for 'data_update' events
+        socket.on('data_update', function (data) {
+            console.log('Received data update:', data);
+            // Reload the webpage when new data is received
+            location.reload();
+        });
+    </script>
+    <h1>Smart Lighting and Monitoring System</h1>
+    <p>Prepared by: Jesse Ting Wen Kai (102769808)</p>
+    <div class="row">
+        <div class="led-container">
+            <h2>LED Status</h2>
+            <ul>
+                {% if led_status[1] == 1 %}
+                <img class="led-image" src="{{ url_for('static', filename='level1.png') }}" alt="Level 1">
+            {% elif led_status[1] == 2 %}
+                <img class="led-image" src="{{ url_for('static', filename='level2.png') }}" alt="Level 2">
+            {% elif led_status[1] == 3 %}
+                <img class="led-image" src="{{ url_for('static', filename='level3.png') }}" alt="Level 3">
+            {% else %}
+                <img class="led-image" src="{{ url_for('static', filename='level0.png') }}" alt="Light Off">
+            {% endif %}
+            <li>Light Bulb: <span class="{% if led_status[0] %}on{% else %}off{% endif %}">{% if led_status[0] %}ON{% else %}OFF{% endif %}</span></li>
+                <li>Brightness Level: {{ led_status[1] }}</li>
+            </ul>
+        </div>
+        <div class="control-panel">
+            <h2>Control Panel</h2>
+            <form action="/toggle_relay" method="post">
+                <h3>Action:<button type="submit">{% if led_status[0] %}Turn OFF{% else %}Turn ON{% endif %}</button></h3>
+            </form>
+            {% if led_status[0] %}
+            <form action="/increase_brightness" method="post">
+                <h3>Increase Brightness: <button type="submit" class="increase">INCREASE</button></h3>
+            </form>
+            <form action="/decrease_brightness" method="post">
+                <h3>Decrease Brightness: <button type="submit" class="decrease">DECREASE</button></h3>
+            </form>
+            
+            {% else %}
+            <h3>Increase Brightness: <span style="color: lightgrey;">INCREASE</span></h3>
+            <h3>Decrease Brightness: <span style="color: lightgrey;">DECREASE</span></h3>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="availability">
+        <h2>Sensor Control Panel</h2>
+        <p class="remind">**Caution: Avoid activating both the LDR and Ultrasonic sensors simultaneously to prevent data conflicts and potential crashes. Proceed with caution if you decide to do so.**</p>
+    <div class="availability-row">
+        <div class="availability-column">
+            <h3>Button Availability: {% if button_value == 1 %}<span class="on">ON</span>{% else %}<span class="off">OFF</span>{% endif %}</h3>
+            <form id="buttonForm" action="/toggle_button" method="post">
+                <label for="buttonToggle"></label>
+                <input type="hidden" id="buttonValue" name="button_value" value="{{ button_value }}">
+                <button type="submit" id="toggleButton">{{ "Turn OFF" if button_value == 1 else "Turn ON" }}</button>
+            </form>
+        </div>
+        <div class="availability-column">
+            <h3>IR Availability: {% if ir_available %}<span class="on">ON</span>{% else %}<span class="off">OFF</span>{% endif %}</h3>
+            <form id="irForm" action="/toggle_ir" method="post">
+                <label for="irToggle"></label>
+                <input type="hidden" id="irValue" name="ir_available" value="{{ ir_available }}">
+                <button type="submit" id="toggleIR">{{ "Turn OFF" if ir_available else "Turn ON" }}</button>
+            </form>
+        </div>
+        <div class="availability-column">
+            <h3>LDR Availability (Automation Rule): {% if ldr_available %}<span class="on">ON</span>{% else %}<span class="off">OFF</span>{% endif %}</h3>
+            {% if ldr_available %}
+            <p>Current Lighting Condition: {% if led_status[1] == 0 %}Very Bright &#x1F61B {% elif led_status[1] == 1 %}Not Enough Bright &#128528{% elif led_status[1] == 2 %}Dark &#x1F61F{% elif led_status[1] == 3 %}Very Dark &#128552{% endif %}</p>
+            {% endif %}
+            <form id="ldrForm" action="/toggle_ldr" method="post">
+                <label for="ldrToggle"></label>
+                <input type="hidden" id="ldrValue" name="ldr_available" value="{{ ldr_available }}">
+                <button type="submit" id="toggleLDR">{{ "Turn OFF" if ldr_available else "Turn ON" }}</button>
+            </form>
+        </div>
+        
+        <div class="availability-column">
+            <h3>Ultrasonic Sensor Availability (Automation Rule): {% if ultrasonic_available %}<span class="on">ON</span>{% else %}<span class="off">OFF</span>{% endif %}</h3>
+            {% if ultrasonic_available %}
+            <p>Current Distance: {{ current_distance }} cm</p>
+            {% endif %}
+            <form id="ultrasonicForm" action="/toggle_ultrasonic" method="post">
+                <label for="ultrasonicToggle"></label>
+                <input type="hidden" id="ultrasonicValue" name="ultrasonic_available" value="{{ ultrasonic_available }}">
+                <button type="submit" id="toggleUltrasonic">{{ "Turn OFF" if ultrasonic_available else "Turn ON" }}</button>
+            </form>
+        </div>
+        
+        
+    </div>
+    </div>
+
+
+    <div class="sensor-adjustments">
+        <h2>Sensor Adjustments</h2>
+        <p class="remind">**First, activate either the LDR or Ultrasonic sensor, then proceed to fine-tune its settings.**</p>
+        <div class="adjustment-column">
+            <form id="ldrDurationForm" action="/update_ldr_duration" method="post" {% if not ldr_available %}disabled{% endif %} onsubmit="return validateLdrDuration()">
+                <label for="ldrDuration">LDR Sensor Interval (minutes):</label>
+                <input type="number" id="ldrDuration" name="ldr_duration" value="{{ ldr_duration }}" step="0.1" {% if not ldr_available %}disabled{% endif %}>
+                <button type="submit" {% if not ldr_available %}disabled{% endif %}>Update</button>
+            </form>
+        </div>
+        
+        <div class="adjustment-column">  
+            <form id="ultrasonicIntervalForm" action="/update_ultrasonic_duration" method="post" {% if not ultrasonic_available %}disabled{% endif %} onsubmit="return validateUltrasonicInterval()">
+                <label for="ultrasonic_duration">Ultrasonic Sensor Interval (minutes):</label>
+                <input type="number" id="ultrasonicduration" name="ultrasonic_duration" value="{{ ultrasonic_duration }}" step="0.1" {% if not ultrasonic_available %}disabled{% endif %}>
+                <button type="submit" {% if not ultrasonic_available %}disabled{% endif %}>Update</button>
+            </form>
+        </div>
+        
+        <div class="adjustment-column">
+            <form id="ultrasonicDistanceForm" action="/update_ultrasonic_distance" method="post" {% if not ultrasonic_available %}disabled{% endif %} onsubmit="return validateUltrasonicDistance()">
+                <label for="ultrasonicDistance">Ultrasonic Sensor Trigger Distance (cm):</label>
+                <input type="number" id="ultrasonicDistance" name="ultrasonic_distance" value="{{ ultrasonic_distance }}" step="1" min="1" max="100" {% if not ultrasonic_available %}disabled{% endif %}>
+                <button type="submit" {% if not ultrasonic_available %}disabled{% endif %}>Update</button>
+            </form>
+        </div>
+        <div class="advanced-automation">
+            <h2>Advanced Automation</h2>
+            <p>*Advanced automation systems utilize sensors such as LDRs to gather daily light conditions. 
+                Using this data, the system determines the optimal brightness for turning on light bulbs, taking into account input from buttons, 
+                remotes, and ultrasonic sensors. Instead of starting from the lowest brightness level, it initiates from the average brightness level 
+                for enhanced efficiency and user experience.*
+            </p>
+
+            <div class="availability-column">
+                <h3>Automation Availability: {% if advanced_available == 1 %}<span class="on">ON</span>{% else %}<span class="off">OFF</span>{% endif %}</h3>
+                <p class="mean-brightness">Recommended Brightness:<span>Level {{ mean }} </span></p>
+                <form id="advancedAutomationForm" action="/toggle_advanced_automation" method="post">
+                    <input type="hidden" name="advanced_available" value="{{ advaced_available }}">
+                    <button type="submit">{{ "Turn OFF" if advanced_available == 1 else "Turn ON" }}</button>
+                </form>
+            </div>
+        </div>
+        
+        
+        
+    
+    <script>
+        function validateLdrDuration() {
+            var ldrDurationInput = document.getElementById("ldrDuration");
+            var ldrDurationValue = parseFloat(ldrDurationInput.value);
+
+            if (ldrDurationValue === 0.0) {
+                alert("LDR duration cannot be 0.0. Please enter a valid value.");
+                return false; // Prevent form submission
+            }
+
+            return true; // Allow form submission
+        }
+
+        function validateUltrasonicInterval() {
+            var ultrasonicIntervalInput = document.getElementById("ultrasonicInterval");
+            var ultrasonicIntervalValue = parseFloat(ultrasonicIntervalInput.value);
+
+            if (ultrasonicIntervalValue === 0.0) {
+                alert("Ultrasonic sensor interval cannot be 0.0. Please enter a valid value.");
+                return false; // Prevent form submission
+            }
+
+            return true; // Allow form submission
+        }
+
+        function validateUltrasonicDistance() {
+            var ultrasonicDistanceInput = document.getElementById("ultrasonicDistance");
+            var ultrasonicDistanceValue = parseInt(ultrasonicDistanceInput.value);
+
+            if (ultrasonicDistanceValue < 1 || ultrasonicDistanceValue > 100) {
+                alert("Ultrasonic sensor distance must be between 1 and 100 cm. Please enter a valid value.");
+                return false; // Prevent form submission
+            }
+
+            return true; // Allow form submission
+        }
+    </script>
+</body>
+
+</html>

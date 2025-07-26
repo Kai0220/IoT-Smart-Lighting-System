@@ -1,0 +1,403 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+nav {
+    background-color: #333; /* Background color for the navigation bar */
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    text-align: center; /* Center the menu items */
+}
+
+nav ul li {
+    display: inline-block; /* Display the menu items in one row */
+}
+
+nav ul li a {
+    display: block;
+    padding: 15px 30px; /* Increase padding for larger size */
+    text-decoration: none;
+    color: #fff; /* Text color for the links */
+    font-size: 18px; /* Increase font size for larger size */
+}
+
+nav ul li a:hover {
+    background-color: #555; /* Background color for the links on hover */
+}
+
+h1 {
+    text-align: center;
+    font-size: 50px;
+    font-weight: bold;
+}
+
+h2{
+    text-decoration: underline;
+    font-size: 30px;
+}
+
+.graph {
+    margin: 0 auto;
+}
+
+.custom-form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px; /* Add some space between elements */
+}
+
+.custom-label {
+    margin-right: 10px; /* Add some space between label and input */
+    font-weight: bold; /* Make the label bold */
+}
+
+.custom-input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+}
+
+.custom-button {
+    padding: 8px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    outline: none;
+    margin-left: 5px;
+}
+
+.custom-button:hover {
+    background-color: #0056b3;
+}
+
+/* Centering the containers */
+.select-container,
+.info-container {
+    text-align: center;
+    margin: auto;
+}
+
+/* Styling for the select dropdown */
+.select-label {
+    font-weight: bold;
+    font-size: 18px;
+    color: #333; /* Dark gray color */
+}
+
+.select-input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    font-size: 16px;
+    color: #555; /* Darker gray color */
+}
+
+/* Styling for the informational container */
+.info-container {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #f9f9f9; /* Light gray background color */
+    margin-top: 20px;
+}
+
+/* Styling for the energy value */
+.energy-value {
+    font-weight: bold;
+    color: #007bff; /* Blue color */
+}
+
+/* Styling for the price value */
+.price-value {
+    font-weight: bold;
+    color: #28a745; /* Green color */
+}
+
+#meanBrightness {
+    margin: 0 auto;
+    text-align: center;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch; /* Ensure both containers have the same height */
+    margin: 20px; /* Add margin to create space around the row */
+}
+
+.led-container,
+.control-panel {
+    flex: 1;
+    padding: 10px;
+    border-radius: 20px;
+    background-color: #f0f0f0;
+    font-size: 18px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 10px; /* Add margin to create space between the containers */
+}
+
+
+.led-container .led-image {
+    width: 250px;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.led-container ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.led-container ul li {
+    margin-bottom: 10px;
+}
+
+.control-panel form {
+    margin-top: 20px;
+}
+
+.control-panel form button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    outline: none;
+    margin: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.control-panel form button:hover {
+    background-color: #0056b3;
+}
+
+.control-panel form span {
+    color: lightgrey;
+}
+
+.control-panel form button.increase {
+    padding: 10px 20px;
+    background-color: #28a745; /* Green color for increase button */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    outline: none;
+    margin: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.control-panel form button.decrease {
+    padding: 10px 20px;
+    background-color: #dc3545; /* Red color for decrease button */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    outline: none;
+    margin: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.control-panel form button.increase:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+.control-panel form button.decrease:hover {
+    background-color: #c82333; /* Darker red on hover */
+}
+
+.led-container ul li {
+    margin-bottom: 15px; /* Increase bottom margin for better spacing */
+    font-size: 22px; /* Further increase font size */
+    font-weight: bold; /* Maintain bold style */
+    color: #555; /* Slightly darken text color for better readability */
+    text-transform: uppercase; /* Keep text in uppercase */
+    position: relative; /* Position for pseudo-element */
+}
+
+.led-container ul li::before {
+    content: "\2022"; /* Use bullet point */
+    color: #007bff; /* Change bullet point color to blue */
+    font-size: 18px; /* Adjust bullet point size */
+    position: absolute; /* Position relative to parent */
+    left: -20px; /* Move bullet point slightly to the left */
+    top: 50%; /* Align bullet point vertically */
+    transform: translateY(-50%); /* Adjust vertical alignment */
+}
+
+.led-container ul li span {
+    color: #28a745; /* Change color of "ON" to green */
+}
+
+.led-container ul li::after {
+    color: #777; /* Slightly darken colon color */
+}
+
+.led-container ul li span.on {
+    color: #28a745; /* Green color for "ON" text */
+}
+
+.led-container ul li span.off {
+    color: #dc3545; /* Red color for "OFF" text */
+}
+
+.availability-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.availability-column {
+    flex: 1;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.availability-column h3 {
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #333;
+}
+
+.availability-column form {
+    margin-top: 10px;
+}
+
+.availability-column form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.availability-column form button {
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    outline: none;
+}
+
+.availability-column form button:hover {
+    background-color: #0056b3;
+}
+
+.availability-column h3 .on {
+    color: #28a745; /* Green color for "On" text */
+}
+
+.availability-column h3 .off {
+    color: #dc3545; /* Red color for "Off" text */
+}
+
+.availability {
+    margin: 0 20px; /* Adds left and right margin */
+}
+
+.availability h2 {
+    text-align: center; /* Centers the h2 text */
+}
+
+.sensor-adjustments {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 0 20px;
+    margin-bottom: 50px;
+}
+
+.sensor-adjustments h2,p {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.remind{
+    color: #c82333;
+    font-style: italic;
+    margin-top: 0;
+}
+
+.adjustment-column {
+    flex: 0 0 calc(30% - 20px); /* Adjust the width as needed */
+    margin-bottom: 20px;
+}
+
+.adjustment-column h3 {
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #333;
+}
+
+.adjustment-column form {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+}
+
+.adjustment-column form label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.adjustment-column form input {
+    width: calc(100% - 40px);
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+.adjustment-column form button {
+    width: calc(100% - 40px);
+    padding: 8px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    outline: none;
+}
+
+.adjustment-column form button:hover {
+    background-color: #0056b3;
+}
+
+.advanced-automation{
+    margin:0 auto;
+}
+
+
+.mean-brightness {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333; /* Choose a color that contrasts well with your background */
+}
+
+.mean-brightness span {
+    color: #ff5733; /* Choose a color for the mean brightness value */
+}
+

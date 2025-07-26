@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="author" content="Jesse Ting Wen Kai"/>
+    <meta name="description" content="iot"/>
+    <meta name="keywords" content="iot"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Light Condition Statistics</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+
+
+</head>
+
+
+<body>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="light">Light Condition Statistics</a></li>
+            <li><a href="energy">Energy Comsumption Statistics</a></li>
+        </ul>
+    </nav>
+    <h1>Light Condition Statistics</h1>
+    <div class="custom-form">
+        <label for="selectedDate" class="custom-label">Select Date:</label>
+        <input type="date" id="selectedDate" name="selectedDate" class="custom-input">
+        <button onclick="fetchData()" class="custom-button">Fetch Data</button>
+    </div>
+    
+    <div id="meanBrightness"></div>
+
+    <div style="width: 80%;" class="graph">
+        <canvas id="myChart"></canvas>
+    </div>
+
+    <script>
+        // Function to fetch data from Flask server using AJAX
+        // Function to fetch data from Flask server using AJAX
+function fetchData() {
+    var selectedDate = document.getElementById("selectedDate").value;
+    fetch("/fetch_data", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ selected_date: selectedDate })
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Call function to update chart with fetched data
+        updateChart(data.timestamps, data.brightnessLevels);
+        // Calculate mean brightness and display it
+        var meanBrightness = calculateMeanBrightness(data.brightnessLevels);
+        displayMeanBrightness(meanBrightness);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+
+function formatTimestamp(timestamp) {
+    // Convert the timestamp string to a Date object
+    var date = new Date(timestamp);
+    // Convert to local timezone
+    date = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+    // Extract hours, minutes, and seconds
+    var hours = date.getHours().toString().padStart(2, '0');
+    var minutes = date.getMinutes().toString().padStart(2, '0');
+    var seconds = date.getSeconds().toString().padStart(2, '0');
+    // Return formatted time
+    return hours + ':' + minutes + ':' + seconds;
+}
+// Function to calculate the mean brightness level
+function calculateMeanBrightness(brightnessLevels) {
+    // Calculate the sum of all brightness levels
+    var sum = brightnessLevels.reduce((acc, val) => acc + val, 0);
+    // Calculate the mean by dividing the sum by the total number of brightness levels
+    var mean = sum / brightnessLevels.length;
+    // Return the mean brightness level
+    return Math.round(mean);
+}
+
+// Function to display the mean brightness level
+function displayMeanBrightness(meanBrightness) {
+    var label;
+    switch (meanBrightness) {
+        case 0:
+            label = "Average Brightness of the day: Bright";
+            break;
+        case 1:
+            label = "Average Brightness of the day: Not Enough Bright";
+            break;
+        case 2:
+            label = "Average Brightness of the day: Dark";
+            break;
+        case 3:
+            label = "Average Brightness of the day: Very Dark";
+            break;
+        default:
+            label = "Average Brightness of the day: Unknown";
+            break;
+    }
+    document.getElementById("meanBrightness").innerText = label;
+}
+
+// Declare chart variable outside the function scope
+var myChart;
+
+// Function to update chart with fetched data
+function updateChart(timestamps, brightnessLevels) {
+    // Format timestamps to display only the time portion
+    var formattedTimestamps = timestamps.map(formatTimestamp);
+    console.log("Timestamps:", timestamps);
+    console.log("Brightness Levels:", brightnessLevels);
+
+    // Define custom labels for the y-axis
+    var customLabels = ["Bright", "Not Enough Bright", "Dark", "Very Dark"];
+
+    // Calculate the mean brightness level
+    var meanBrightness = calculateMeanBrightness(brightnessLevels);
+
+    // Display the mean brightness level on the screen
+    document.getElementById('meanBrightness').textContent = "Mean Brightness: " + meanBrightness;
+
+    // Check if myChart instance exists
+    if (myChart) {
+        // If myChart already exists, update its data
+        myChart.data.labels = formattedTimestamps;
+        myChart.data.datasets[0].data = brightnessLevels;
+        myChart.update(); // Update the chart
+    } else {
+        // If myChart doesn't exist, create a new Chart instance
+        var ctx = document.getElementById('myChart').getContext('2d');
+        myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: formattedTimestamps,
+                datasets: [{
+                    label: 'Brightness Level',
+                    data: brightnessLevels,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        suggestedMax: 3,
+                        ticks: {
+                            stepSize: 1,
+                            callback: function(value, index, values) {
+                                return customLabels[index];
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+}
+    </script>
+</body>
+</html>
+
